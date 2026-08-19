@@ -1,5 +1,7 @@
 package com.gustavo.gerenciadordetreinos;
 
+import com.gustavo.gerenciadordetreinos.entities.Treino;
+
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -8,7 +10,8 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        List<String> treinos = new ArrayList<>();
+
+        List<Treino> treinos = new ArrayList<>();
 
         System.out.println("Gerenciador de treinos");
         int r = 0;
@@ -30,7 +33,7 @@ public class Main {
                             System.out.println("Nenhum treino criado.");
                         } else {
                             System.out.println("Treinos");
-                            for (String treino : treinos) {
+                            for (Treino treino : treinos) {
                                 System.out.println(treino);
                             }
                         }
@@ -39,7 +42,7 @@ public class Main {
                     case 2:
                         System.out.print("Digite o nome do treino: ");
                         String nomeTreino = sc.nextLine();
-                        treinos.add(nomeTreino);
+                        treinos.add(new Treino(nomeTreino));
                         System.out.println("Treino criado com sucesso");
                         break;
 
@@ -49,7 +52,7 @@ public class Main {
                         } else {
                             System.out.println("Treinos");
                             int i = 0;
-                            for (String treino : treinos) {
+                            for (Treino treino : treinos) {
                                 System.out.printf("%d° %s\n", i + 1, treino);
                                 i++;
                             }
