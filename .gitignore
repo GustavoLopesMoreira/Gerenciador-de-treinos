@@ -25,4 +25,5 @@ replay_pid*
 
 # Configurações do IntelliJ
 .idea/
+meus-treinos.txt
 *.iml
