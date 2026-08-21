@@ -2,6 +2,7 @@ package com.gustavo.gerenciadordetreinos;
 
 import com.gustavo.gerenciadordetreinos.entities.Exercicio;
 import com.gustavo.gerenciadordetreinos.entities.Treino;
+import com.gustavo.gerenciadordetreinos.services.GerenciadorDeArquivos;
 
 import java.util.*;
 
@@ -9,7 +10,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        List<Treino> treinos = new ArrayList<>();
+        List<Treino> treinos = GerenciadorDeArquivos.carregarTreinos();
 
         System.out.println("Gerenciador de treinos");
         int opcao = 0;
@@ -160,6 +161,7 @@ public class Main {
 
                     case 5:
                         System.out.println("Salvando dados e encerrando o menu...");
+                        GerenciadorDeArquivos.salvarTreinos(treinos);
                         break;
 
                     default:
