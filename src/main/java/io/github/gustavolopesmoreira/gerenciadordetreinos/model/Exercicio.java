@@ -1,4 +1,4 @@
-package com.gustavo.gerenciadordetreinos.entities;
+package io.github.gustavolopesmoreira.gerenciadordetreinos.model;
 
 public class Exercicio {
     private String nomeExercicio;

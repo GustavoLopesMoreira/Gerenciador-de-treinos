@@ -1,7 +1,7 @@
-package com.gustavo.gerenciadordetreinos.services;
+package io.github.gustavolopesmoreira.gerenciadordetreinos.repository;
 
-import com.gustavo.gerenciadordetreinos.entities.Exercicio;
-import com.gustavo.gerenciadordetreinos.entities.Treino;
+import io.github.gustavolopesmoreira.gerenciadordetreinos.model.Exercicio;
+import io.github.gustavolopesmoreira.gerenciadordetreinos.model.Treino;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

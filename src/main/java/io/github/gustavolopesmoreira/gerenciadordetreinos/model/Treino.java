@@ -1,4 +1,4 @@
-package com.gustavo.gerenciadordetreinos.entities;
+package io.github.gustavolopesmoreira.gerenciadordetreinos.model;
 
 import java.util.ArrayList;
 import java.util.List;
