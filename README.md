@@ -39,5 +39,5 @@ O projeto está sendo atualizado para se tornar uma aplicação web moderna. As 
 - [ ] **Interface Gráfica/Web:** Desenvolvimento de um Front-end para consumo da API.
 
 Feito por: Gustavo Lopes Moreira.
-GitHub: https://github.com/GustavoLopesMoreira
-LinkedIn: https://www.linkedin.com/in/gustavo-lopes-moreira/
+-GitHub: https://github.com/GustavoLopesMoreira
+-LinkedIn: https://www.linkedin.com/in/gustavo-lopes-moreira/
