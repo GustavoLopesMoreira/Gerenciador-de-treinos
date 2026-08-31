@@ -50,7 +50,7 @@ public class GerenciadorDeArquivos {
                 }
             }
         } catch (IOException e) {
-
+            System.err.println("Erro ao carregar os dados de treinos: " + e.getMessage());
         }
 
         return treinosCarregados;
