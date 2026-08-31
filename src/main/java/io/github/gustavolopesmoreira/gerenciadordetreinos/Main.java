@@ -1,17 +1,23 @@
 package io.github.gustavolopesmoreira.gerenciadordetreinos;
 
-import io.github.gustavolopesmoreira.gerenciadordetreinos.model.Treino;
 import io.github.gustavolopesmoreira.gerenciadordetreinos.model.Exercicio;
+import io.github.gustavolopesmoreira.gerenciadordetreinos.model.Treino;
 import io.github.gustavolopesmoreira.gerenciadordetreinos.repository.GerenciadorDeArquivos;
+import io.github.gustavolopesmoreira.gerenciadordetreinos.service.TreinoService;
 
-import java.util.*;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Scanner;
 
 public class Main {
 
-    private static Scanner sc = new Scanner(System.in);
+    private static final Scanner sc = new Scanner(System.in);
+    private static TreinoService treinoService;
 
     public static void main(String[] args) {
-        List<Treino> treinos = GerenciadorDeArquivos.carregarTreinos();
+        // Inicializa o serviço injetando os dados carregados do arquivo
+        treinoService = new TreinoService(GerenciadorDeArquivos.carregarTreinos());
+
         System.out.println("Gerenciador de treinos");
         int opcao = 0;
 
@@ -19,24 +25,24 @@ public class Main {
             try {
                 exibirMenu();
                 opcao = sc.nextInt();
-                sc.nextLine();
+                sc.nextLine(); // Limpa o buffer
 
                 switch (opcao) {
                     case 1:
-                        listarTreinos(treinos);
+                        listarTreinos();
                         break;
                     case 2:
-                        criarTreino(treinos);
+                        criarTreino();
                         break;
                     case 3:
-                        deletarTreino(treinos);
+                        deletarTreino();
                         break;
                     case 4:
-                        editarTreino(treinos);
+                        editarTreino();
                         break;
                     case 5:
                         System.out.println("Salvando dados e encerrando o menu...");
-                        GerenciadorDeArquivos.salvarTreinos(treinos);
+                        GerenciadorDeArquivos.salvarTreinos(treinoService.listarTreinos());
                         break;
                     default:
                         System.out.println("Opção inválida, tente novamente.");
@@ -44,6 +50,8 @@ public class Main {
             } catch (InputMismatchException e) {
                 System.out.println("Erro: Por favor, digite apenas números inteiros válidos.");
                 sc.nextLine();
+            } catch (IllegalArgumentException e) {
+                System.out.println("Aviso: " + e.getMessage());
             } catch (Exception e) {
                 System.out.println("Ocorreu um erro inesperado: " + e.getMessage());
             }
@@ -62,7 +70,8 @@ public class Main {
         System.out.print("Escolha uma opção: ");
     }
 
-    private static void listarTreinos(List<Treino> treinos) {
+    private static void listarTreinos() {
+        List<Treino> treinos = treinoService.listarTreinos();
         if (treinos.isEmpty()) {
             System.out.println("Nenhum treino criado.");
         } else {
@@ -73,67 +82,61 @@ public class Main {
         }
     }
 
-    private static void criarTreino(List<Treino> treinos) {
+    private static void criarTreino() {
         System.out.print("Digite o nome do treino: ");
         String nomeTreino = sc.nextLine();
-        treinos.add(new Treino(nomeTreino));
+        treinoService.criarTreino(nomeTreino);
         System.out.println("Treino criado com sucesso!");
     }
 
-    private static void deletarTreino(List<Treino> treinos) {
+    private static void deletarTreino() {
+        List<Treino> treinos = treinoService.listarTreinos();
         if (treinos.isEmpty()) {
             System.out.println("Nenhum treino para deletar.");
-        } else {
-            System.out.println("Treinos:");
-
-            for (int i = 0; i < treinos.size(); i++) {
-                System.out.printf("%d° %s\n", i + 1, treinos.get(i).getNome());
-            }
-
-            System.out.print("Digite o numero do treino a ser removido: ");
-            int numeroRemovido = sc.nextInt();
-            sc.nextLine();
-
-            if (numeroRemovido >= 1 && numeroRemovido <= treinos.size()) {
-                treinos.remove(numeroRemovido - 1);
-                System.out.println("Treino removido com sucesso");
-            } else {
-                System.out.println("Valor inválido.");
-            }
+            return;
         }
+
+        System.out.println("Treinos:");
+        for (int i = 0; i < treinos.size(); i++) {
+            System.out.printf("%d° %s\n", i + 1, treinos.get(i).getNome());
+        }
+
+        System.out.print("Digite o numero do treino a ser removido: ");
+        int numeroRemovido = sc.nextInt();
+        sc.nextLine();
+
+        treinoService.deletarTreino(numeroRemovido - 1);
+        System.out.println("Treino removido com sucesso");
     }
 
-    private static void editarTreino(List<Treino> treinos) {
+    private static void editarTreino() {
+        List<Treino> treinos = treinoService.listarTreinos();
         if (treinos.isEmpty()) {
             System.out.println("Nenhum treino para editar.");
+            return;
+        }
+
+        System.out.println("Treinos:");
+        for (int i = 0; i < treinos.size(); i++) {
+            System.out.printf("%d° %s\n", i + 1, treinos.get(i).getNome());
+        }
+
+        System.out.print("Digite o numero do treino a ser editado: ");
+        int numeroEditado = sc.nextInt();
+        sc.nextLine();
+
+        Treino treinoSelecionado = treinoService.buscarTreino(numeroEditado - 1);
+
+        System.out.print("Adicionar (1) exercício ou remover (0) exercícios: ");
+        int respEditor = sc.nextInt();
+        sc.nextLine();
+
+        if (respEditor == 1) {
+            adicionarExercicioNoTreino(treinoSelecionado);
+        } else if (respEditor == 0) {
+            removerExercicioDoTreino(treinoSelecionado);
         } else {
-            System.out.println("Treinos:");
-
-            for (int i = 0; i < treinos.size(); i++) {
-                System.out.printf("%d° %s\n", i + 1, treinos.get(i).getNome());
-            }
-
-            System.out.print("Digite o numero do treino a ser editado: ");
-            int numeroEditado = sc.nextInt();
-            sc.nextLine();
-
-            if (numeroEditado >= 1 && numeroEditado <= treinos.size()) {
-                Treino treinoSelecionado = treinos.get(numeroEditado - 1);
-
-                System.out.print("Adicionar (1) exercício ou remover (0) exercícios: ");
-                int respEditor = sc.nextInt();
-                sc.nextLine();
-
-                if (respEditor == 1) {
-                    adicionarExercicioNoTreino(treinoSelecionado);
-                } else if (respEditor == 0) {
-                    removerExercicioDoTreino(treinoSelecionado);
-                } else {
-                    System.out.println("Opção de edição inválida.");
-                }
-            } else {
-                System.out.println("Valor inválido.");
-            }
+            System.out.println("Opção de edição inválida.");
         }
     }
 
@@ -148,7 +151,7 @@ public class Main {
             sc.nextLine();
 
             Exercicio novoExercicio = new Exercicio(nomeExercicio, numeroSeries);
-            treinoSelecionado.addExercicio(novoExercicio);
+            treinoService.adicionarExercicio(treinoSelecionado, novoExercicio);
 
             System.out.println("Exercício adicionado com sucesso!");
 
@@ -177,13 +180,8 @@ public class Main {
             int numExercicio = sc.nextInt();
             sc.nextLine();
 
-            if (numExercicio >= 1 && numExercicio <= listaExercicios.size()) {
-                Exercicio exRemovido = listaExercicios.get(numExercicio - 1);
-                treinoSelecionado.removeExercicio(exRemovido);
-                System.out.println("Exercício removido com sucesso!");
-            } else {
-                System.out.println("Número de exercício inválido.");
-            }
+            treinoService.removerExercicio(treinoSelecionado, numExercicio - 1);
+            System.out.println("Exercício removido com sucesso!");
 
             if (treinoSelecionado.getExercicios().isEmpty()) {
                 System.out.println("Todos os exercícios deste treino foram removidos.");
